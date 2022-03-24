@@ -18,15 +18,17 @@ job_id=$SLURM_JOB_ID
 slurm_dir=results/logs
 
 ##cp script.sh ${slurm_dir}/slurm-${job_id}.shs
-scontrol write batch_script ${job_id} ${slurm_dir}/slurm-${job_id}_args.sh
+#scontrol write batch_script ${job_id} ${slurm_dir}/slurm-${job_id}_args.sh
 
 ssh -tt jjia@nodelogin02 /bin/bash << ENDSSH
 echo "Hello, I an in nodelogin02 to do some git operations."
+cd data/sharednet
 git add -A
 git commit -m "jobid is ${job_id}"
 git push
 exit
 ENDSSH
+
 echo "Hello, I am back in $(hostname) to run the code"
 
 # shellcheck disable=SC2046
