@@ -178,7 +178,7 @@ class Task:
             period = 1 if step_id==0 else 200  # the first accumulate_loss is the first loss
             log_metric(self.model_name + '_TrainBatchLossIn200Steps', self.accumulate_loss/period, step_id)
             self.accumulate_loss = 0
-        print(f" {self.model_name} loss: {loss}, "
+        print(f" {self.model_name} loss: {loss:.3f}, "
               f"load batch cost: {t2-t1:.1f}, "
               f"forward costs: {t4-t3:.1f}, "
               f"backward costs: {t5-t4:.1f}; ", end='' )
