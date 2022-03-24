@@ -25,7 +25,7 @@ echo "Hello, I an in nodelogin02 to do some git operations."
 cd data/sharednet
 git add -A
 git commit -m "jobid is ${job_id}"
-git push
+git push origin master
 exit
 ENDSSH
 
