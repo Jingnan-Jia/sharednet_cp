@@ -158,7 +158,7 @@ class Task:
         self.opt.zero_grad()
         if 1:
             print('using amp')
-            with torch.cuda.amp.autocast():
+            with torch.autocast():
                 pred = self.net(image,cond)
                 loss = self.loss_fun(pred, mask)
             t4 = time.time()
