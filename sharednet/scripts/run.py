@@ -10,7 +10,7 @@ from typing import (Optional, Union)
 import matplotlib
 import torch
 from medutils.medutils import count_parameters
-from mlflow import log_metric, log_param
+from mlflow import log_metric, log_param, start_run, end_run, log_params
 
 sys.path.append("../..")
 
@@ -237,9 +237,11 @@ if __name__ == "__main__":
     args = get_args()
     log_dict: Dict[str, LogType] = {}  # a global dict to store variables saved to log files
 
-    id: int = record_1st(args)  # write super parameters from set_args.py to record file.
+    id, log_dict = record_1st(args)  # write super parameters from set_args.py to record file.
+    start_run(run_id=id, run_name=id)
+    log_params(log_dict)
     args.id = id  # do not need to pass id seperately to the latter function
     run(args)
     record_2nd(log_dict=log_dict, args=args)  # write more parameters & metrics to record file.
-
+    end_run()
 

@@ -235,21 +235,19 @@ def record_1st(args: argparse.Namespace) -> int:
             # start record by id, date,time row = [new_id, date, time, ]
             idatime = {'ID': new_id, 'start_date': start_date, 'start_time': start_time}
             args_dict = vars(args)
-            idatime.update(args_dict)  # followed by super parameters
-            log_params(idatime)
-            log_param('ID', int(new_id))  # for the convenience of sorting in MLflow
+            args_dict.update(idatime)
 
             if len(df) == 0:  # empty file
-                df = pd.DataFrame([idatime])  # need a [] , or need to assign the index for df
+                df = pd.DataFrame([args_dict])  # need a [] , or need to assign the index for df
             else:
                 index = df.index.to_list()[-1]  # last index
-                for key, value in idatime.items():  # write new line
+                for key, value in args_dict.items():  # write new line
                     df.at[index + 1, key] = value  #
 
             df = fill_running(df)  # fill the state information for other experiments
             df = correct_type(df)  # aviod annoying thing like: ID=1.00
             write_and_backup(df, record_file, mypath)
-    return new_id
+    return new_id, args_dict
 
 
 def record_2nd(log_dict: dict, args: argparse.Namespace) -> None:
