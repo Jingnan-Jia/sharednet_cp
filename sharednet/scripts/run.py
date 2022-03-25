@@ -136,7 +136,6 @@ class Task:
         self.opt = opt
         self.loss_fun = loss_fun
         self.device = torch.device("cuda")
-        self.scaler = torch.cuda.amp.GradScaler()
         data, self.tr_dl, self.vd_dl, self.ts_dl = all_loaders(self.model_name)
         self.tr_dl_endless = loop_dl(self.tr_dl)  # loop training dataset
 
@@ -148,6 +147,8 @@ class Task:
         self.accumulate_loss = 0
 
     def step(self, step_id):
+        self.scaler = torch.cuda.amp.GradScaler()
+
         # print(f"start a step for {self.model_name}")
         t1 = time.time()
         image, mask, cond = (next(self.tr_dl_endless).get(key) for key in ('image', 'mask', 'cond'))
