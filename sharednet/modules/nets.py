@@ -500,14 +500,14 @@ class UNet(nn.Module):
 
         self.final_conv = Conv["conv", dimensions](fea[5], out_channels, kernel_size=1)
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor, cond):
         """
         Args:
             x: input should have spatially N dimensions
                 ``(Batch, in_channels, dim_0[, dim_1, ..., dim_N])``, N is defined by `dimensions`.
                 It is recommended to have ``dim_n % 16 == 0`` to ensure all maxpooling inputs have
                 even edge lengths.
-            class_id: a batch of class_ids.
+            cond: it is only as a placeholder so that I do not need to custom new dataloader output and evaluator
 
         Returns:
             A torch Tensor of "raw" predictions in shape
