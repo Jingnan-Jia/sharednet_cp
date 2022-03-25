@@ -194,7 +194,7 @@ class DataAll(Data):
     def __init__(self,
                  task: str,
                  ):
-        psz: str = "96_96"
+        psz: str = "64_16"
 
         if 'lobe' in task:
             tsp: Optional[str] = "1.5_2.5"
