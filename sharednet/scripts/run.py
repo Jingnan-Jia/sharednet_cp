@@ -156,7 +156,8 @@ class Task:
         t3 = time.time()
 
         self.opt.zero_grad()
-        if 1:
+        if 0:
+            print('using amp')
             with torch.cuda.amp.autocast():
                 pred = self.net(image,cond)
                 loss = self.loss_fun(pred, mask)
@@ -165,6 +166,7 @@ class Task:
             self.scaler.step(self.opt)
             self.scaler.update()
         else:
+            print('do not use amp')
             pred = self.net(image, cond)
             loss = self.loss_fun(pred, mask)
             t4 = time.time()
