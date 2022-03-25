@@ -164,7 +164,9 @@ class Task:
                 loss = self.loss_fun(pred, mask)
             t4 = time.time()
             self.scaler.scale(loss).backward()
+            t_bw = time.time()
             self.scaler.step(self.opt)
+            t_st = time.time()
             self.scaler.update()
         else:
             print('do not use amp ', end='')
@@ -184,7 +186,9 @@ class Task:
         print(f" {self.model_name} loss: {loss:.3f}, "
               f"load batch cost: {t2-t1:.1f}, "
               f"forward costs: {t4-t3:.1f}, "
-              f"backward costs: {t5-t4:.1f}; ", end='' )
+              f"only backward costs: {t_bw-t4:.1f}; "
+              f"only step costs: {t_st-t_bw:.1f}; "
+              f"only update costs: {t5-t_st:.1f}; ", end='' )
 
     def do_validation_if_need(self, step_id, steps, valid_period=2000):
 
