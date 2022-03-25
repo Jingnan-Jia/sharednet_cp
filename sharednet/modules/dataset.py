@@ -96,7 +96,7 @@ def mydataloader(model_name, cond_flag, same_mask_value, patch_xy, patch_z, tsp_
     ct_name_list: List[str]
     gdth_name_list: List[str]
     train_files, valid_files, test_files = get_file_names(data_dir=data_dir, return_mode=return_mode)
-    train_files, valid_files, test_files = train_files[:2], valid_files[:3], test_files[:3]
+    # train_files, valid_files, test_files = train_files[:2], valid_files[:3], test_files[:3]
     # train_files, val_files = train_files[:2], val_files[:2]
     loaders = []
     if 'train' in return_mode:
@@ -194,7 +194,7 @@ class DataAll(Data):
     def __init__(self,
                  task: str,
                  ):
-        psz: str = "64_16"
+        psz: str = "128_64"
 
         if 'lobe' in task:
             tsp: Optional[str] = "1.5_2.5"

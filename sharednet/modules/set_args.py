@@ -14,7 +14,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--model_names', type=str,
                         help="'lobe_all', 'lobe_all_single', 'lobe_lu', 'lobe_ll', 'lobe_ru', 'lobe_rm', 'lobe_rl', "
                              "'vessel', 'AV_artery', 'AV_vein', ‘AV_all', 'liver', 'pancreas' ",
-                        default='liver-pancreas')
+                        default='liver')
     parser.add_argument('--mode', help='mode', type=str, choices=('train', 'infer'), default='train')
     parser.add_argument('--infer_data_dir', help='data directory for inference', type=str, default='train')
     parser.add_argument('--infer_weights_fpath', help='trained weights full path for inference', type=str, default='train')
@@ -37,8 +37,9 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--weight_decay', help='weight_decay', type=float, default=0.0001)
 
     parser.add_argument('--cache', help='if cache dataset', type=bool, default=True)
-    parser.add_argument('--batch_size', help='batch_size', type=int, default=10)
+    parser.add_argument('--batch_size', help='batch_size', type=int, default=1)
     parser.add_argument('--pps', help='patches per scan', type=int, default=10)
+    parser.add_argument('--amp', help='mixed precision', type=bool, default=False)
 
     parser.add_argument('--outfile', help='output file when running by script instead of pycharm', type=str)
     parser.add_argument('--hostname', help='hostname of the server', type=str)

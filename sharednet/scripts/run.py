@@ -157,8 +157,7 @@ class Task:
         t3 = time.time()
 
         self.opt.zero_grad()
-        amp = 0
-        if amp:
+        if args.amp:
             print('using amp ', end='')
             with torch.cuda.amp.autocast():
                 pred = self.net(image,cond)
