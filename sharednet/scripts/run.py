@@ -238,7 +238,7 @@ if __name__ == "__main__":
     log_dict: Dict[str, LogType] = {}  # a global dict to store variables saved to log files
 
     id, log_dict = record_1st(args)  # write super parameters from set_args.py to record file.
-    start_run(run_id=id, run_name=id)
+    start_run(run_id=str(id), run_name=str(id))
     log_params(log_dict)
     args.id = id  # do not need to pass id seperately to the latter function
     run(args)
