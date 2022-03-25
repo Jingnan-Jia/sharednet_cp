@@ -14,7 +14,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--model_names', type=str,
                         help="'lobe_all', 'lobe_all_single', 'lobe_lu', 'lobe_ll', 'lobe_ru', 'lobe_rm', 'lobe_rl', "
                              "'vessel', 'AV_artery', 'AV_vein', ‘AV_all', 'liver', 'pancreas' ",
-                        default='liver-pancreas')
+                        default='liver')
     parser.add_argument('--mode', help='mode', type=str, choices=('train', 'infer'), default='train')
     parser.add_argument('--infer_data_dir', help='data directory for inference', type=str, default='train')
     parser.add_argument('--infer_weights_fpath', help='trained weights full path for inference', type=str, default='train')
@@ -22,7 +22,7 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('--loss', help='loss function', type=str, default='dice')
 
-    parser.add_argument('--cond_flag', help='if conditioning or not', type=bool, default=True)
+    parser.add_argument('--cond_flag', help='if conditioning or not', type=bool, default=False)
     parser.add_argument('--cond_method', help='conditioining method', type=str, choices=('concat', 'mul_add'),
                         default='concat')
     parser.add_argument('--cond_pos', help='condition position', type=str, choices=('input', 'enc', 'dec', 'enc_dec'),
