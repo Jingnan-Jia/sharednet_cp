@@ -27,6 +27,8 @@ from sharednet.modules.dataset import DataAll
 
 from argparse import Namespace
 
+args = get_args()
+
 LogType = Optional[Union[int, float, str]]  # a global type to store immutable variables saved to log files
 
 def get_out_chn(task_name):
@@ -183,7 +185,7 @@ class Task:
             period = 1 if step_id==0 else 200  # the first accumulate_loss is the first loss
             log_metric(self.model_name + '_TrainBatchLossIn200Steps', self.accumulate_loss/period, step_id)
             self.accumulate_loss = 0
-        if amp:
+        if args.amp:
             print(f" {self.model_name} loss: {loss:.3f}, "
                   f"load batch cost: {t2-t1:.1f}, "
                   f"forward costs: {t4-t3:.1f}, "
@@ -247,7 +249,6 @@ def run(args: Namespace):
 
 
 if __name__ == "__main__":
-    args = get_args()
     log_dict: Dict[str, LogType] = {}  # a global dict to store variables saved to log files
 
     id, log_dict = record_1st(args)  # write super parameters from set_args.py to record file.
