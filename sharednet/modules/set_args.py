@@ -22,7 +22,7 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('--loss', help='loss function', type=str, default='dice')
 
-    parser.add_argument('--cond_flag', help='if conditioning or not', type=bool, default=False)
+    parser.add_argument('--cond_flag', help='if conditioning or not', type=int, default=0)
     parser.add_argument('--cond_method', help='conditioining method', type=str, choices=('concat', 'mul_add'),
                         default='concat')
     parser.add_argument('--cond_pos', help='condition position', type=str, choices=('input', 'enc', 'dec', 'enc_dec'),
