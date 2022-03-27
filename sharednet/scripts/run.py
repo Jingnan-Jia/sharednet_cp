@@ -3,6 +3,7 @@
 # @Author  : Jingnan
 # @Email   : jiajingnan2222@gmail.com
 import sys
+import threading
 import time
 from typing import Dict, List
 from typing import (Optional, Union)
@@ -18,7 +19,7 @@ import argparse
 # import streamlit as st
 matplotlib.use('Agg')
 from sharednet.modules.set_args import get_args
-from sharednet.modules.tool import record_1st, record_2nd
+from sharednet.modules.tool import record_1st, record_2nd, record_cgpu_info
 from sharednet.modules.nets import get_net
 from sharednet.modules.loss import get_loss
 from sharednet.modules.path import Mypath, MypathDataDir
@@ -149,6 +150,8 @@ class Task:
         self.accumulate_loss = 0
 
     def step(self, step_id):
+
+
         self.scaler = torch.cuda.amp.GradScaler()
 
         # print(f"start a step for {self.model_name}")
@@ -197,6 +200,7 @@ class Task:
                   f"load batch cost: {t2 - t1:.1f}, "
                   f"forward costs: {t4 - t3:.1f}, "
                   f"only update costs: {t5 - t4:.1f}; ", end='')
+
 
     def do_validation_if_need(self, step_id, steps, valid_period=2000):
 
@@ -253,7 +257,11 @@ if __name__ == "__main__":
 
     id, log_dict = record_1st(args)  # write super parameters from set_args.py to record file.
 
+
     with mlflow.start_run(run_name=str(id), tags={"mlflow.note.content": args.remark}):
+        p1 = threading.Thread(target=record_cgpu_info, args=(args.outfile,))
+        p1.start()
+
         log_params(log_dict)
         args.id = id  # do not need to pass id seperately to the latter function
         run(args)

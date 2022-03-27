@@ -209,7 +209,7 @@ def get_df_id(record_file: str) -> Tuple[pd.DataFrame, int]:
     return df, new_id
 
 
-def record_1st(args: argparse.Namespace) -> int:
+def record_1st(args: argparse.Namespace):
     """First record in this experiment.
 
     Args:
@@ -376,7 +376,7 @@ def record_mem_info() -> int:
     return int(memusage.strip())
 
 
-def record_gpu_info(outfile) -> Tuple:
+def record_cgpu_info(outfile) -> Tuple:
     """Record GPU information to `outfile`.
 
     Args:
@@ -406,18 +406,45 @@ def record_gpu_info(outfile) -> Tuple:
         handle = nvidia_smi.nvmlDeviceGetHandleByIndex(gpuid)
         gpuname = nvidia_smi.nvmlDeviceGetName(handle)
         gpuname = gpuname.decode("utf-8")
+        log_param('gpuname', gpuname)
         # log_dict['gpuname'] = gpuname
         info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
-        gpu_mem_usage = str(_bytes_to_megabytes(info.used)) + '/' + str(_bytes_to_megabytes(info.total)) + ' MB'
+        gpu_mem_used = str(_bytes_to_megabytes(info.used)) + '/' + str(_bytes_to_megabytes(info.total))
+        gpu_mem_usage = gpu_mem_used + ' MB'
+        log_param('gpu_mem_used_MB', gpu_mem_used)
         # log_dict['gpu_mem_usage'] = gpu_mem_usage
         gpu_util = 0
-        for i in range(5):
+        for i in range(60*10):  # monitor 10 minutes
             res = nvidia_smi.nvmlDeviceGetUtilizationRates(handle)
             gpu_util += res.gpu
             time.sleep(1)
+            log_metric("gpu_util", gpu_util, step=i)
         gpu_util = gpu_util / 5
         # log_dict['gpu_util'] = str(gpu_util) + '%'
         return gpuname, gpu_mem_usage, str(gpu_util) + '%'
     else:
         print('outfile is None, can not show GPU memory info')
         return None, None, None
+
+
+def gpu_info(outfile: str) -> None:
+    """Get GPU usage information.
+
+    This function needs to be in the main file because it will be executed by another thread.
+
+    Args:
+        outfile: The format of `outfile` is: slurm-[JOB_ID].out
+
+    Returns:
+        None. The GPU information will be saved to global variable `log_dict`.
+
+    Example:
+
+    >>> gpu_info('slurm-98234.out')
+
+    """
+    gpu_name, gpu_usage, gpu_utis = record_gpu_info(outfile)
+
+    # log_dict['gpuname'], log_dict['gpu_mem_usage'], log_dict['gpu_util'] = gpu_name, gpu_usage, gpu_utis
+
+    return None
