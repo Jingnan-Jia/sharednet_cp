@@ -15,6 +15,7 @@ from filelock import FileLock
 from sharednet.modules.path import Mypath, MypathBase
 from pathlib import Path
 from mlflow import log_metric, log_param, log_artifacts, log_params
+import psutil
 
 class MyKeys:
     """The keys I used in this project."""
@@ -396,7 +397,21 @@ def record_cgpu_info(outfile) -> Tuple:
     """
 
     if outfile:
-        vcc = psutil.cpu_count()
+        cpu_count = psutil.cpu_count()
+        log_param('cpu_count', cpu_count)
+        cpu_percent = psutil.cpu_percent()
+        log_param('cpu_percent', cpu_percent)
+        gpu_mem = dict(psutil.virtual_memory()._asdict())
+        log_params(gpu_mem)
+        cpu_mem_used = psutil.virtual_memory().percent
+        log_param('cpu_mem_used', cpu_mem_used)
+
+        pid = os.getpid()
+        python_process = psutil.Process(pid)
+        memoryUse = python_process.memory_info()[0] / 2. ** 30  # memory use in GB...I think
+        log_param('cpu_mem_used_2', memoryUse)
+
+        print('memory use:', memoryUse)
 
         jobid_gpuid = outfile.split('-')[-1]
         tmp_split = jobid_gpuid.split('_')[-1]
