@@ -11,7 +11,7 @@ from typing import (Optional, Union)
 import matplotlib
 import torch
 from medutils.medutils import count_parameters
-from mlflow import log_metric, log_param, start_run, end_run, log_params
+from mlflow import log_metric, log_param, start_run, end_run, log_params, log_artifact
 import mlflow
 sys.path.append("../..")
 
@@ -261,6 +261,8 @@ if __name__ == "__main__":
     with mlflow.start_run(run_name=str(id), tags={"mlflow.note.content": args.remark}):
         p1 = threading.Thread(target=record_cgpu_info, args=(args.outfile,))
         p1.start()
+        log_artifact(args.out_file+'.err')
+        log_artifact(args.out_file+'.out')
 
         log_params(log_dict)
         args.id = id  # do not need to pass id seperately to the latter function
