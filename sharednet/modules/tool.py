@@ -420,11 +420,11 @@ def record_cgpu_info(outfile) -> Tuple:
 
         # log_dict['gpu_mem_usage'] = gpu_mem_usage
         gpu_util = 0
-        for i in range(60*10):  # monitor 10 minutes
+        for i in range(60*20):  # monitor 20 minutes
             memoryUse = python_process.memory_info().rss / 2. ** 30  # memory use in GB...I think
-            log_metric('cpu_mem_used__in_process_rss', memoryUse, step=i)
+            log_metric('cpu_mem_used_GB_in_process_rss', memoryUse, step=i)
             memoryUse = python_process.memory_info().vms / 2. ** 30  # memory use in GB...I think
-            log_metric('cpu_mem_used__in_process_vms', memoryUse, step=i)
+            log_metric('cpu_mem_used_GB_in_process_vms', memoryUse, step=i)
             cpu_percent = psutil.cpu_percent()
             log_metric('cpu_tuil_used_percent', cpu_percent, step=i)
             # gpu_mem = dict(psutil.virtual_memory()._asdict())
