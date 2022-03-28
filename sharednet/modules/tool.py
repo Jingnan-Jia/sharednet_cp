@@ -396,6 +396,8 @@ def record_cgpu_info(outfile) -> Tuple:
     """
 
     if outfile:
+        vcc = psutil.cpu_count()
+
         jobid_gpuid = outfile.split('-')[-1]
         tmp_split = jobid_gpuid.split('_')[-1]
         if len(tmp_split) == 2:
@@ -408,18 +410,21 @@ def record_cgpu_info(outfile) -> Tuple:
         gpuname = gpuname.decode("utf-8")
         log_param('gpuname', gpuname)
         # log_dict['gpuname'] = gpuname
-        info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
-        gpu_mem_used = str(_bytes_to_megabytes(info.used)) + '/' + str(_bytes_to_megabytes(info.total))
-        gpu_mem_usage = gpu_mem_used + ' MB'
-        log_param('gpu_mem_used_MB', gpu_mem_used)
+
         # log_dict['gpu_mem_usage'] = gpu_mem_usage
         gpu_util = 0
         for i in range(60*10):  # monitor 10 minutes
             res = nvidia_smi.nvmlDeviceGetUtilizationRates(handle)
             gpu_util += res.gpu
             time.sleep(1)
-            log_metric("gpu_util", gpu_util, step=i)
+            log_metric("gpu_util", res.gpu, step=i)
+
+            info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
+            gpu_mem_used = str(_bytes_to_megabytes(info.used)) + '/' + str(_bytes_to_megabytes(info.total))
+            log_metric('gpu_mem_used_MB', gpu_mem_used, step=i)
         gpu_util = gpu_util / 5
+        gpu_mem_usage = gpu_mem_used + ' MB'
+
         # log_dict['gpu_util'] = str(gpu_util) + '%'
         return gpuname, gpu_mem_usage, str(gpu_util) + '%'
     else:
@@ -443,7 +448,7 @@ def gpu_info(outfile: str) -> None:
     >>> gpu_info('slurm-98234.out')
 
     """
-    gpu_name, gpu_usage, gpu_utis = record_gpu_info(outfile)
+    gpu_name, gpu_usage, gpu_utis = record_cgpu_info(outfile)
 
     # log_dict['gpuname'], log_dict['gpu_mem_usage'], log_dict['gpu_util'] = gpu_name, gpu_usage, gpu_utis
 
