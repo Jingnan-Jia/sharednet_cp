@@ -438,7 +438,8 @@ def record_cgpu_info(outfile) -> Tuple:
             log_metric("gpu_util", res.gpu, step=i)
 
             info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
-            gpu_mem_used = str(_bytes_to_megabytes(info.used)) + '/' + str(_bytes_to_megabytes(info.total))
+            # gpu_mem_used = str(_bytes_to_megabytes(info.used)) + '/' + str(_bytes_to_megabytes(info.total))
+            gpu_mem_used = _bytes_to_megabytes(info.used)
             log_metric('gpu_mem_used_MB', gpu_mem_used, step=i)
         gpu_util = gpu_util / 5
         gpu_mem_usage = gpu_mem_used + ' MB'
