@@ -107,13 +107,13 @@ def all_loaders(model_name):
 def loop_dl(dl):
     # keys = ("image", "mask", "cond")
     dl_endless = iter(dl)
-    print(f"iter dataloader once")
+    print(f"iter dataloader first")
     while True:
         try:
             out = next(dl_endless)
         except:
             dl_endless = iter(dl)
-            print(f"iter dataloader once")
+            print(f"iter dataloader second")
 
             out = next(dl_endless)
         yield out
