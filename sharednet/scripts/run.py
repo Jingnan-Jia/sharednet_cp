@@ -252,6 +252,17 @@ def run(args: Namespace):
     print('Finish all training/validation/testing + metrics!')
 
 
+def record_artifacts(outfile):
+    if outfile:
+        for i in range(60 * 2):  # 20 minutes
+            time.sleep(10)
+            log_artifact(outfile)
+        return None
+    else:
+        print(f"No output file, no log artifacts")
+        return None
+
+
 if __name__ == "__main__":
     log_dict: Dict[str, LogType] = {}  # a global dict to store variables saved to log files
 
@@ -261,6 +272,9 @@ if __name__ == "__main__":
     with mlflow.start_run(run_name=str(id), tags={"mlflow.note.content": args.remark}):
         p1 = threading.Thread(target=record_cgpu_info, args=(args.outfile,))
         p1.start()
+        p2 = threading.Thread(target=record_artifacts, args=(args.outfile,))
+        p2.start()
+
         log_artifact(args.outfile+'err.txt')
         log_artifact(args.outfile+'out.txt')
 

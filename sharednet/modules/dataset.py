@@ -180,9 +180,9 @@ class Data:
                     f"{task}_psz_xy": self.psz_xy,
                     f"{task}_psz_z": self.psz_z})
 
-    def load(self, cond_flag, same_mask_value, pps, batch_size, return_mode=('train', 'valid', 'test'), load_workers=self.workers, cache=True):
+    def load(self, cond_flag, same_mask_value, pps, batch_size, return_mode=('train', 'valid', 'test'), cache=True):
         all_loaders = mydataloader(self.task, cond_flag, same_mask_value, self.psz_xy, self.psz_z, self.tsp_xy, self.tsp_z,
-                                   pps, self.data_dir, return_mode, load_workers, cache, batch_size)
+                                   pps, self.data_dir, return_mode, self.workers, cache, batch_size)
 
         return all_loaders
 
