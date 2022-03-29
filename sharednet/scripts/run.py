@@ -254,9 +254,15 @@ def run(args: Namespace):
 
 def record_artifacts(outfile):
     if outfile:
-        for i in range(60 * 2):  # 20 minutes
+        for i in range(6 * 10):  # 10 minutes
             time.sleep(10)
-            log_artifact(outfile)
+            log_artifact(outfile+'_err.txt')
+            log_artifact(outfile+'_out.txt')
+
+        for i in range(10):  # another 10 minutes, low frequency
+            time.sleep(60)
+            log_artifact(outfile+'_err.txt')
+            log_artifact(outfile+'_out.txt')
         return None
     else:
         print(f"No output file, no log artifacts")
@@ -274,9 +280,6 @@ if __name__ == "__main__":
         p1.start()
         p2 = threading.Thread(target=record_artifacts, args=(args.outfile,))
         p2.start()
-
-        log_artifact(args.outfile+'err.txt')
-        log_artifact(args.outfile+'out.txt')
 
         log_params(log_dict)
         args.id = id  # do not need to pass id seperately to the latter function
