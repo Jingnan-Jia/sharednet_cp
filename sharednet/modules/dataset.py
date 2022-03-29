@@ -162,7 +162,7 @@ class Data:
     Data class for different tasks
     """
 
-    def __init__(self, task: str, tsp: Optional[str], psz: str, ):
+    def __init__(self, task: str, tsp: Optional[str], psz: str, workers: int):
         self.task = task
         if tsp is not None:
             self.tsp_xy = float(tsp.split("_")[0])
@@ -173,13 +173,14 @@ class Data:
         self.psz_xy = int(psz.split("_")[0])
         self.psz_z = int(psz.split("_")[1])
         self.data_dir = MypathDataDir(task).data_dir
+        self.workers = workers
 
         log_params({f"{task}_tsp_xy": self.tsp_xy,
                     f"{task}_tsp_z": self.tsp_z,
                     f"{task}_psz_xy": self.psz_xy,
                     f"{task}_psz_z": self.psz_z})
 
-    def load(self, cond_flag, same_mask_value, pps, batch_size, return_mode=('train', 'valid', 'test'), load_workers=6, cache=True):
+    def load(self, cond_flag, same_mask_value, pps, batch_size, return_mode=('train', 'valid', 'test'), load_workers=self.workers, cache=True):
         all_loaders = mydataloader(self.task, cond_flag, same_mask_value, self.psz_xy, self.psz_z, self.tsp_xy, self.tsp_z,
                                    pps, self.data_dir, return_mode, load_workers, cache, batch_size)
 
@@ -195,7 +196,8 @@ class DataAll(Data):
                  task: str,
                  ):
         psz: str = "128_64"
-
+        workers = 12
+        log_param('workers', workers)
         if 'lobe' in task:
             tsp: Optional[str] = "1.5_2.5"
         elif 'vessel' in task or 'AV' in task:
@@ -204,7 +206,7 @@ class DataAll(Data):
             tsp = "1.5_1"
         else:
             raise Exception(f"wrong task name: {task}")
-        super().__init__(task, tsp, psz)
+        super().__init__(task, tsp, psz, workers)
 #
 # class DataLobe(Data):
 #     """

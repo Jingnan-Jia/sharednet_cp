@@ -32,6 +32,7 @@
 training accumulate_loss period = 200
 
 ### `dataset.py` set target spacing (`tsp`) and patch size (`psz`)
+- workers = 12
 for lobe/lung:
 - tsp: str = "1.5_2.5"
 - psz: str = "144_96"
