@@ -96,7 +96,7 @@ def mydataloader(model_name, cond_flag, same_mask_value, patch_xy, patch_z, tsp_
     ct_name_list: List[str]
     gdth_name_list: List[str]
     train_files, valid_files, test_files = get_file_names(data_dir=data_dir, return_mode=return_mode)
-    train_files, valid_files, test_files = train_files[:2], valid_files[:3], test_files[:3]
+    train_files, valid_files, test_files = train_files[:2], valid_files[:1], test_files[:1]
     # train_files, val_files = train_files[:2], val_files[:2]
     loaders = []
     if 'train' in return_mode:
@@ -114,7 +114,7 @@ def mydataloader(model_name, cond_flag, same_mask_value, patch_xy, patch_z, tsp_
             num_workers=load_workers,
             pin_memory=torch.cuda.is_available(),
             persistent_workers=True,
-            collate_fn=pad_list_data_collate,
+            # collate_fn=pad_list_data_collate,
         )
         loaders.append(train_loader)
 
@@ -129,7 +129,7 @@ def mydataloader(model_name, cond_flag, same_mask_value, patch_xy, patch_z, tsp_
             num_workers=load_workers,
             pin_memory=torch.cuda.is_available(),
             persistent_workers=True,
-            collate_fn=pad_list_data_collate
+            # collate_fn=pad_list_data_collate
 
         )
         loaders.append(val_loader)
@@ -145,7 +145,8 @@ def mydataloader(model_name, cond_flag, same_mask_value, patch_xy, patch_z, tsp_
             num_workers=load_workers,
             pin_memory=torch.cuda.is_available(),
             persistent_workers=True,
-        collate_fn=pad_list_data_collate)
+        # collate_fn=pad_list_data_collate
+        )
         loaders.append(test_loader)
 
 
