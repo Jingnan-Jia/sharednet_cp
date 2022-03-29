@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from monai.data import NibabelReader, ITKReader
 from monai.transforms import LoadImaged, AddChanneld, Orientationd, Spacingd, ScaleIntensityRanged, SpatialPadd, \
-    RandAffined, RandCropByPosNegLabeld, RandGaussianNoised, CastToTyped, ToTensord
+    RandAffined, RandCropByPosNegLabeld, RandGaussianNoised, CastToTyped, ToTensord, RandSpatialCropSamplesd
 from monai.transforms import Transform
 from mlflow import log_metric, log_param
 
@@ -116,9 +116,10 @@ def get_xforms(model_name, cond_flag, same_mask_value, patch_xy, patch_z, tsp_xy
                     as_tensor_output=False,
                 ),
                 SpatialPadd(keys, spatial_size=(patch_xy, patch_xy, patch_z), mode="minimum"),
-                RandCropByPosNegLabeld(keys, label_key=keys[1],
-                                       spatial_size=(patch_xy, patch_xy, patch_z),
-                                       num_samples=pps),
+                RandSpatialCropSamplesd(keys, random_size=False, roi_size=(patch_xy, patch_xy, patch_z), num_samples=pps),
+                # RandCropByPosNegLabeld(keys, label_key=keys[1],
+                #                        spatial_size=(patch_xy, patch_xy, patch_z),
+                #                        num_samples=pps),
                 SpatialPadd(keys, spatial_size=(patch_xy, patch_xy, patch_z), mode="minimum"),
 
                 # todo: num_samples
