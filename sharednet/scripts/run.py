@@ -111,6 +111,7 @@ def loop_dl(dl):
     while True:
         try:
             out = next(dl_endless)
+            print(f"pop a data")
         except:
             dl_endless = iter(dl)
             print(f"iter dataloader second")
