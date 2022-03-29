@@ -154,7 +154,13 @@ class Task:
         self.accumulate_loss = 0
 
     def step(self, step_id):
+        i = 0
+        for data in self.tr_dl:
+            print(f"pop train data idx: {i}")
 
+        i = 0
+        for data in self.tr_dl:
+            print(f"pop another train data idx: {i}")
 
         self.scaler = torch.cuda.amp.GradScaler()
 
