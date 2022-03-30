@@ -5,3 +5,4 @@ sharednet/results_archive/
 sharednet/modules/__pycache__/
 *.pyc
 .neptune/
+.idea

@@ -37,7 +37,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--weight_decay', help='weight_decay', type=float, default=0.0001)
 
     parser.add_argument('--cache', help='if cache dataset', type=bool, default=True)
-    parser.add_argument('--batch_size', help='batch_size', type=int, default=1)
+    parser.add_argument('--batch_size', help='batch_size', type=int, default=3)
     parser.add_argument('--pps', help='patches per scan', type=int, default=10)
     parser.add_argument('--amp', help='mixed precision', type=bool, default=False)
 

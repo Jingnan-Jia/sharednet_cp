@@ -104,33 +104,31 @@ def all_loaders(model_name):
                                     batch_size=args.batch_size)
     return data, tr_dl, vd_dl, ts_dl
 
-def loop_dl(dl):
-    # keys = ("image", "mask", "cond")
-    dl_endless = iter(dl)
-    print(f"iter dataloader first")
+def loop_dl(dl, batch_size):  # convert dict to list, convert wrong batch to right batch
     while True:
-        try:
-            out = next(dl_endless)
-            print(f"pop a data")
-        except:
-            dl_endless = iter(dl)
-            print(f"iter dataloader second")
+        keys = ('image', 'mask', 'cond')
+        out_image, out_mask, out_cond = [], [], []
 
-            out = next(dl_endless)
-        yield out
+        for ori_batch in dl:  # batch length is batch_size * Croped_patches
+            ori_batch_ls = [ori_batch[key] for key in keys]  # [image, mask, cond]
+            for image, mask, cond in  zip(*ori_batch_ls):
 
-    # while True:
-    #     for data in dl:
-    #         x_pps = data[keys[0]]
-    #         y_pps = data[keys[1]]
-    #         cond_pps = data[keys[2]]
-    #         for x, y, cond in zip(x_pps, y_pps, cond_pps):
-    #             # print("start put by single thread, not fluent thread")
-    #             x = x[None, ...]
-    #             y = y[None, ...]
-    #             cond = cond[None, ...]
-    #             data_single = (x, y, cond)
-    #             yield data_single
+                out_image.append(image[None])  # a list of image with shape [1, chn,  x, y, z]
+                out_mask.append(mask[None])
+                out_cond.append(cond[None])
+                if len(out_image) >= batch_size:
+                    # out_batch_image = torch.Tensor(batch_size, *image.shape[1:])
+                    # out_batch_mask = torch.Tensor(batch_size, *mask.shape[1:])
+                    # out_batch_cond = torch.Tensor(batch_size, *cond.shape[1:])
+
+                    out_batch_image = torch.cat(out_image, 0)  # [batch_size, chn, x, y, z]
+                    out_batch_mask = torch.cat(out_mask, 0)
+                    out_batch_cond = torch.cat(out_cond, 0)
+
+                    out_image, out_mask, out_cond = [], [], []  # empty these lists
+
+                    yield out_batch_image, out_batch_mask, out_batch_cond
+
 
 class Task:
     def __init__(self, model_name, net, out_chn, opt, loss_fun):
@@ -144,7 +142,7 @@ class Task:
         self.loss_fun = loss_fun
         self.device = torch.device("cuda")
         data, self.tr_dl, self.vd_dl, self.ts_dl = all_loaders(self.model_name)
-        self.tr_dl_endless = loop_dl(self.tr_dl)  # loop training dataset
+        self.tr_dl_endless = loop_dl(self.tr_dl, args.batch_size)  # loop training dataset
 
 
         self.eval_vd = get_evaluator(net, self.vd_dl, self.mypath, data.psz_xy, data.psz_z, args.batch_size, 'valid',
@@ -154,19 +152,12 @@ class Task:
         self.accumulate_loss = 0
 
     def step(self, step_id):
-        i = 0
-        for data in self.tr_dl:
-            print(f"pop train data idx: {i}")
-
-        i = 0
-        for data in self.tr_dl:
-            print(f"pop another train data idx: {i}")
 
         self.scaler = torch.cuda.amp.GradScaler()
 
         # print(f"start a step for {self.model_name}")
         t1 = time.time()
-        image, mask, cond = (next(self.tr_dl_endless).get(key) for key in ('image', 'mask', 'cond'))
+        image, mask, cond = next(self.tr_dl_endless)
         t2 = time.time()
         image, mask, cond = image.to(self.device), mask.to(self.device), cond.to(self.device)
         t3 = time.time()
