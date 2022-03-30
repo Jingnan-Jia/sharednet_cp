@@ -1,5 +1,12 @@
 import argparse
 
+
+def boolean_string(s):
+    if s not in {'False', 'True'}:
+        raise ValueError('Not a valid boolean string')
+    return s == 'True'
+
+
 def get_args() -> argparse.Namespace:
     """Get arguments/hyper-parameters for the experiment.
 
@@ -22,24 +29,24 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('--loss', help='loss function', type=str, default='dice')
 
-    parser.add_argument('--cond_flag', help='if conditioning or not', type=int, default=0)
+    parser.add_argument('--cond_flag', help='if conditioning or not', type=boolean_string, default=False)
     parser.add_argument('--cond_method', help='conditioining method', type=str, choices=('concat', 'mul_add'),
                         default='concat')
     parser.add_argument('--cond_pos', help='condition position', type=str, choices=('input', 'enc', 'dec', 'enc_dec'),
                         default='enc')
-    parser.add_argument('--same_mask_value', help='mask values for different tasks', type=bool, default=True)
+    parser.add_argument('--same_mask_value', help='mask values for different tasks', type=boolean_string, default=True)
 
-    parser.add_argument('--base', help='channel number of the first conv layer', type=int, default=8)
+    parser.add_argument('--base', help='channel number of the first conv layer', type=int, default=16)
     parser.add_argument('--steps', help='training epochs', type=int, default=100001)
     parser.add_argument('--valid_period', help='period for validation', type=int, default=200)
 
     parser.add_argument('--lr', help='learning rate for lobe segmentation', type=float, default=0.0001)
     parser.add_argument('--weight_decay', help='weight_decay', type=float, default=0.0001)
 
-    parser.add_argument('--cache', help='if cache dataset', type=bool, default=True)
+    parser.add_argument('--cache', help='if cache dataset', type=boolean_string, default=True)
     parser.add_argument('--batch_size', help='batch_size', type=int, default=1)
     parser.add_argument('--pps', help='patches per scan', type=int, default=10)
-    parser.add_argument('--amp', help='mixed precision', type=bool, default=True)
+    parser.add_argument('--amp', help='mixed precision', type=boolean_string, default=True)
 
     parser.add_argument('--outfile', help='output file when running by script instead of pycharm', type=str)
     parser.add_argument('--hostname', help='hostname of the server', type=str)
