@@ -243,10 +243,11 @@ def record_1st(args: argparse.Namespace):
             else:
                 index = df.index.to_list()[-1]  # last index
                 for key, value in args_dict.items():  # write new line
-                    df.at[index + 1, key] = value  #
+                    if key=='ID':
+                        df.at[index + 1, key] = value  #
 
-            df = fill_running(df)  # fill the state information for other experiments
-            df = correct_type(df)  # aviod annoying thing like: ID=1.00
+            # df = fill_running(df)  # fill the state information for other experiments
+            # df = correct_type(df)  # aviod annoying thing like: ID=1.00
             write_and_backup(df, record_file, mypath)
     return new_id, args_dict
 
